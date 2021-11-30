@@ -1,0 +1,209 @@
+openapi: 3.0.2
+info:
+  description: A REST API for creating, listing and deleting users.
+  title: Users service API
+  contact:
+    name: Joan Maeso
+    email: jmaeso@enti.cat
+  version: 0.0.1
+servers:
+  - url: http://127.0.0.1:8080
+    description: Development machine
+paths:
+  /users:
+    post:
+      tags:
+        - users
+      description: Creates a new user to the system with the provided values.
+      summary: Creates a new user
+      operationId: CreateUser
+      responses:
+        "201":
+          description: User created
+        "400":
+          description: In case any of the provided params was not valid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: In case of any unexpected internal error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+    get:
+      tags:
+        - users
+      description: Returns the list of the users with all the matching query params *if provided*
+      summary: Finds users by country, first_name and/or last_name
+      operationId: ListUsers
+      parameters:
+        - name: country
+          in: query
+          description: The users would be filtered by country
+          required: false
+          schema:
+            type: string
+            example: AR
+        - name: first_name
+          in: query
+          description: The users would be filtered by their first name
+          required: false
+          schema:
+            type: string
+            example: Lionel
+        - name: last_name
+          in: query
+          description: The users would be filtered by their last name
+          required: false
+          schema:
+            type: string
+            example: Messi
+      responses:
+        "200":
+          description:
+            List of users matching the query, or all the users if no query
+            params were provided
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserNoPassword"
+        "500":
+          description: In case any unexpected internal error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+        - users
+      description: Marks the user as deleted in the system.
+      summary: Delete a user by Id
+      operationId: DeleteUser
+      parameters:
+        - name: user_id
+          in: path
+          description: The id for the user that needs to be deleted.
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: aad86d3d-4404-4f58-bdc5-54a109500d60
+      responses:
+        "200":
+          description: User deleted
+        "400":
+          description: In case any of the provided params was not valid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: In case the specified user_id is not found in the system.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: In case any unexpected internal error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    User:
+      type: object
+      description: Main entity of the service
+      properties:
+        id:
+          description: Unique identifier of the user.
+          type: string
+          format: uuid
+          example: e22896bb-de9c-47d1-b5ae-005c31d49a6f
+        firstName:
+          type: string
+          description: first name of the user.
+          example: Lionel
+        lastName:
+          type: string
+          description: last name of the user.
+          example: Messi
+        nickName:
+          description: nick name of the user.
+          type: string
+          example: God
+        password:
+          description: password for the user to login.
+          type: string
+          minLength: 5
+          example: $ekr€t
+        email:
+          description: email of the user.
+          type: string
+          example: leo.messi@fcb.com
+        country:
+          description: country of the user.
+          type: string
+          format: ISO 3166 alpha-2
+          example: AR
+      required:
+        - "id"
+        - "email"
+        - "password"
+        - "nickName"
+    UserNoPassword:
+      description: Main entity of the service
+      properties:
+        id:
+          description: Unique identifier of the user.
+          type: string
+          format: uuid
+          example: e22896bb-de9c-47d1-b5ae-005c31d49a6f
+        firstName:
+          type: string
+          description: first name of the user.
+          example: Lionel
+        lastName:
+          type: string
+          description: last name of the user.
+          example: Messi
+        nickName:
+          description: nick name of the user.
+          type: string
+          example: God
+        email:
+          description: email of the user.
+          type: string
+          example: lionel.messi@fcb.com
+        country:
+          description: country of the user.
+          type: string
+          format: ISO 3166 alpha-2
+          example: AR
+      required:
+        - "id"
+        - "email"
+        - "nickName"
+    Error:
+      description: ErrorResponse defines a standard error format for all the responses
+      properties:
+        error_code:
+          description: Internal code for the errors
+          type: string
+          example: "0001"
+        request_id:
+          example: host.example.com/random-0001
+          description: >-
+            Unique identifier for the request. This will map internally with a
+            log entry containing the error.
+          type: string
