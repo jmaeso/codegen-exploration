@@ -3,13 +3,14 @@ run:
 
 .PHONY: openapi-gen
 openapi-gen:
-	openapi-generator generate \
-	--generator-name go \
-	--input-spec docs/openapi.yaml \
-	--output internal/openapi \
-	--package-name openapi \
-	--global-property models,modelDocs=false
+	@echo "-----\ndeprecated command, openapi-generator does not support 3.1.0 (yet)\n---\n"
+	docker run --rm -v "$(PWD)/docs:/spec" openapitools/openapi-generator-cli:v5.3.0 generate \
+		--generator-name go \
+		--input-spec spec/openapi.yaml \
+		--output internal/openapi \
+		--package-name openapi \
+		--global-property models,modelDocs=false
 
 .PHONY: openapi-lint
 openapi-lint:
-	openapi lint docs/openapi.yaml
+	docker run --rm -v $(PWD)/docs:/spec redocly/openapi-cli:v1.0.0-beta.67 lint openapi.yaml
