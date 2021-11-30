@@ -14,3 +14,10 @@ openapi-gen:
 .PHONY: openapi-lint
 openapi-lint:
 	docker run --rm -v $(PWD)/docs:/spec redocly/openapi-cli:v1.0.0-beta.67 lint openapi.yaml
+
+.PHONY: jsonschema-gen
+jsonschema-gen:
+	gojsonschema docs/openapi.yaml \
+		--output internal/open_schema/models.go \
+		--package jsonschema \
+		--yaml-extension .yaml
