@@ -9,3 +9,7 @@ openapi-gen:
 	--output internal/openapi \
 	--package-name openapi \
 	--global-property models,modelDocs=false
+
+.PHONY: openapi-lint
+openapi-lint:
+	openapi lint docs/openapi.yaml
