@@ -6,6 +6,6 @@ openapi-gen:
 	openapi-generator generate \
 	--generator-name go \
 	--input-spec docs/openapi.yaml \
-	--output internal/http \
-	--package-name http \
+	--output internal/openapi \
+	--package-name openapi \
 	--global-property models,modelDocs=false
