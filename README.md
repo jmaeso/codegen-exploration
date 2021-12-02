@@ -32,3 +32,5 @@ Be able to **build APIs** with a schema-first approach, which would allow us to:
             format: uuid
             example: e22896bb-de9c-47d1-b5ae-005c31d49a6f
     ```
+    - Update: Maybe it would be more scalable to use the validator package
+- The other interesting go code generator library (https://github.com/a-h/generate) does not support yaml as an input.
